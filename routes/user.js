@@ -4,7 +4,7 @@ import {sign_up,activate_account,login,forgotPassword,changepassword} from "../c
 const router=express.Router();
 
 router.post("/signup", sign_up);
-router.post("/activate",activate_account);
+router.get("/activate",activate_account);
 router.post("/login",login);
 router.post("/forgot",forgotPassword);
 router.post("/changepassword",changepassword);
