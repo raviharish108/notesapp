@@ -30,7 +30,7 @@ export const sign_up=async(req,res)=>{
   const password_hash=await bcrypt.hash(password,12);
  const payload = { "username":username,"email":email,"password":password_hash}
   const activation_token = jwt.sign(payload, process.env.activation_secret, {expiresIn: "5m"})
-  const url=`http://localhost:3000/token=${activation_token}`
+  const url=`http://localhost:3000/verify/token=${activation_token}`
   await sentEmail(email,url,"verify your email address")
   return res.status(500).json({msg:"Register Success! Please activate your email to start."})
 
