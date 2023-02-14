@@ -30,7 +30,7 @@ export const sign_up=async(req,res)=>{
   const password_hash=await bcrypt.hash(password,12);
  const payload = { "username":username,"email":email,"password":password_hash}
   const activation_token = jwt.sign(payload, process.env.activation_secret, {expiresIn: "5m"})
-  const url=`http://localhost:3000/verify/token=${activation_token}`
+  const url=`http://localhost:3000/verify?token=${activation_token}`
   await sentEmail(email,url,"verify your email address")
   return res.status(500).json({msg:"Register Success! Please activate your email to start."})
 
@@ -39,7 +39,24 @@ export const sign_up=async(req,res)=>{
 }
 }
 
-
+export const verify=async(req,res)=>{
+  try{
+    const{token}=req.query;
+    if(!token){
+      return res.status(400).json({msg:"token required"})
+    }
+    const user= jwt.verify(token,process.env.activation_secret);
+    if(!user) return res.status(400).json({msg: "invalid token"})
+    const{email}=user
+    const check=await users.findOne({email:email})
+    if(check){
+     return res.status(400).json({msg:"please give some other email id"})
+    }
+    return  res.status(200).json({msg:"token has been verified"})
+    }catch(err){
+       res.json(400).json({msg:err.message})
+    }
+    }
 
 export const activate_account=async(req,res)=>{
 try{
