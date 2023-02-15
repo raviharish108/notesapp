@@ -104,7 +104,7 @@ export const forgotPassword= async (req, res) => {
         return res.status(400).json({msg: "This email does not exist."})
       }
       const payload = {id: user._id, email: user.email}
-      const forgotpassword_token =await jwt.sign(payload,process.env.forgotPassword_secret , {expiresIn: "5m"})
+      const forgotpassword_token =await jwt.sign(payload,process.env.forgotpassword_secret , {expiresIn: "5m"})
       const url=`http://localhost:3000/token=${forgotpassword_token}&id=${user._id}`
       await sentEmail(email, url, "Reset your password")
        return res.json({msg: "Re-send the password, please check your email."})
