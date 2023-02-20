@@ -47,7 +47,7 @@ export const verify=async(req,res)=>{
     }
     const user= jwt.verify(token,process.env.activation_secret);
     if(!user) return res.status(400).json({msg: "invalid token"})
-    const{email}=user
+    const{username,email,password}=user
     const check=await users.findOne({email:email})
     if(check){
      return res.status(400).json({msg:"please give some other email id"})
@@ -105,7 +105,7 @@ export const forgotPassword= async (req, res) => {
       }
       const payload = {id: user._id, email: user.email}
       const forgotpassword_token =await jwt.sign(payload,process.env.forgotpassword_secret , {expiresIn: "5m"})
-      const url=`http://localhost:3000/token=${forgotpassword_token}&id=${user._id}`
+      const url=`http://localhost:3000/changepassword?token=${forgotpassword_token}&id=${user._id}`
       await sentEmail(email, url, "Reset your password")
        return res.json({msg: "Re-send the password, please check your email."})
   } catch (err) {
@@ -143,5 +143,27 @@ export const changepassword=async(req,res)=>{
   return res.status(500).json({msg:"password successfully changed"})
   }catch(err){
     return res.status(500).json({msg:err.message})
+  }
+}
+export const changepassword_verify=async(req,res)=>{
+    try{
+      const{token,id}=req.query;
+      if(!token||!id){
+        return res.status(400).json({msg:"invalid request"})
+      }
+      if(!isValidObjectId(id)){
+        return res.status(400).json({msg:"invalid id"})
+      }
+      const user=await users.findById(id)
+       if(!user){
+           return res.status(400).json({msg:"user cannot found!"})
+       }
+     const ismatch= jwt.verify(token,process.env.forgotPassword_secret);
+     if(!ismatch){
+      return res.status(500).json({msg:"invalid token"})
+     }
+     return res.status(200).json({msg:"successfully verified token"})
+  }catch(err){
+    return res.status(400).json({msg:err.message})
   }
 }
