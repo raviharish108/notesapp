@@ -125,7 +125,7 @@ export const changepassword=async(req,res)=>{
      if(!user){
          return res.status(400).json({msg:"user cannot found!"})
      }
-   const ismatch= jwt.verify(token,process.env.forgotPassword_secret);
+   const ismatch= jwt.verify(token,process.env.forgotpassword_secret);
    if(!ismatch){
     return res.status(500).json({msg:"invalid token"})
    }
@@ -158,7 +158,7 @@ export const changepassword_verify=async(req,res)=>{
        if(!user){
            return res.status(400).json({msg:"user cannot found!"})
        }
-     const ismatch= jwt.verify(token,process.env.forgotPassword_secret);
+     const ismatch= jwt.verify(token,process.env.forgotpassword_secret);
      if(!ismatch){
       return res.status(500).json({msg:"invalid token"})
      }
