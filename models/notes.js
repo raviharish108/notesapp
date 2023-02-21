@@ -9,8 +9,8 @@ const noteSchema = new mongoose.Schema({
         required: true
     },
     date:{
-        type: Date,
-        default: Date.now
+        type: Number, 
+        default: (new Date()).getTime()
     },
     owner_id: {
         type: String,
