@@ -30,7 +30,7 @@ export const sign_up=async(req,res)=>{
   const password_hash=await bcrypt.hash(password,12);
  const payload = { "username":username,"email":email,"password":password_hash}
   const activation_token = jwt.sign(payload, process.env.activation_secret, {expiresIn: "5m"})
-  const url=`http://localhost:3000/verify?token=${activation_token}`
+  const url=`${process.env.frontend_url}/verify?token=${activation_token}`
   await sentEmail(email,url,"verify your email address")
   return res.status(500).json({msg:"Register Success! Please activate your email to start."})
 
@@ -105,7 +105,7 @@ export const forgotPassword= async (req, res) => {
       }
       const payload = {id: user._id, email: user.email}
       const forgotpassword_token =await jwt.sign(payload,process.env.forgotpassword_secret , {expiresIn: "5m"})
-      const url=`http://localhost:3000/changepassword?token=${forgotpassword_token}&id=${user._id}`
+      const url=`${process.env.frontend_url}/changepassword?token=${forgotpassword_token}&id=${user._id}`
       await sentEmail(email, url, "Reset your password")
        return res.json({msg: "Re-send the password, please check your email."})
   } catch (err) {
