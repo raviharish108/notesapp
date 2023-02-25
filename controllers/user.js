@@ -89,7 +89,7 @@ if(!ismatch){
 }
 const payload = {id: user._id, name: user.username}
 const token = jwt.sign(payload, process.env.usertoken_secret, {expiresIn: "1d"})
-return res.json({token:token})
+return res.json({username:user._id,email:user.email,token:token})
 }catch(err){
   return res.status(500).json({msg:err.message})
 }
