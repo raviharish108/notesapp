@@ -3,7 +3,9 @@ import { sentEmail } from "../sendEmail.js";
 import { successEmail } from "../successEmail.js";
 import bcrypt from "bcrypt";
 import  jwt  from "jsonwebtoken";
-import { isValidObjectId } from "mongoose"
+import { isValidObjectId } from "mongoose";
+
+
 function validateEmail(email) {
     const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email);
@@ -21,24 +23,24 @@ export const sign_up=async(req,res)=>{
     return res.status(400).json({msg:"invalid emails"})
   }
    
-  const user = await users.findOne({email:email})
-  if(user) return res.status(400).json({msg: "This email already exists."})
+  const user = await users.findOne({email:email});
+  if(user) return res.status(400).json({msg: "This email already exists."});
 
- if(password.length<6){
-  return res.status(400).json({msg:"password must be atleast 6 to 8 characters"})
+ if(!password.length>6){
+  return res.status(400).json({msg:"password must be atleast 6  or and above characters"});
  }
   const password_hash=await bcrypt.hash(password,12);
- const payload = { "username":username,"email":email,"password":password_hash}
-  const activation_token = jwt.sign(payload, process.env.activation_secret, {expiresIn: "5m"})
+ const payload = { "username":username,"email":email,"password":password_hash};
+  const activation_token = jwt.sign(payload, process.env.activation_secret, {expiresIn: "10m"});
   const url=`${process.env.frontend_url}/verify?token=${activation_token}`
-  await sentEmail(email,url,"verify your email address")
-  return res.status(500).json({msg:"Register Success! Please activate your email to start."})
 
+  await sentEmail(email,url,"verify your email address")
+  return res.status(500).json({ msg:"Register Success! Please activate your email to start."});
 }catch(err){
   return res.status(400).json({msg:err.message})
 }
 }
-
+//
 export const verify=async(req,res)=>{
   try{
     const{token}=req.query;
@@ -57,7 +59,7 @@ export const verify=async(req,res)=>{
        res.json(400).json({msg:err.message})
     }
     }
-
+//
 export const activate_account=async(req,res)=>{
 try{
  const{token}=req.query;
@@ -75,7 +77,7 @@ return res.status(500).json({msg:"Account has been Activated!"})
   res.json(400).json({msg:err.message})
 }
 }
-
+//
 export const login=async(req,res)=>{
   try{
 const {email,password}=req.body;
@@ -94,7 +96,7 @@ return res.json({username:user.username,email:user.email,token:token})
   return res.status(500).json({msg:err.message})
 }
 }
-
+//
 export const forgotPassword= async (req, res) => {
   try {
       const {email} = req.body
@@ -112,6 +114,7 @@ export const forgotPassword= async (req, res) => {
       return res.status(500).json({msg: err.message})
   }
 }
+//
 export const changepassword=async(req,res)=>{
   try{
     const{token,id}=req.query;
@@ -145,6 +148,7 @@ export const changepassword=async(req,res)=>{
     return res.status(500).json({msg:err.message})
   }
 }
+//
 export const changepassword_verify=async(req,res)=>{
     try{
       const{token,id}=req.query;
