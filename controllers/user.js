@@ -99,7 +99,7 @@ return res.json({username:user.username,email:user.email,token:token})
 //
 export const forgotPassword= async (req, res) => {
   try {
-      const {email} = req.body
+      const {email} = await req.body
       const user = await users.findOne({email:email})
       if(!user)
       {
