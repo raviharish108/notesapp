@@ -137,9 +137,9 @@ export const changepassword=async(req,res)=>{
    if(issamepassword){
     return res.status(400).json({msg:"dont give same password"})
   }
-  if(password.length<6){
-    return res.status(400).json({msg:"password must be atleast 6 to 18 characters"})
-  }
+  if(!password.length>6){
+    return res.status(400).json({msg:"password must be atleast 6  or and above characters"});
+   }
   const password_hash=await bcrypt.hash(password,12);
   await users.findOneAndUpdate({_id:id},{password:password_hash})
   await successEmail(user.email,"successfully changed password")
